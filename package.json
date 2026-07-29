@@ -1,0 +1,14 @@
+{
+  "name": "planly",
+  "version": "1.0.0",
+  "description": "A simple and professional desktop planning and reminder application.",
+  "main": "main.js",
+  "author": "FFGok",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^37.2.0"
+  }
+}
