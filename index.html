@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
 
@@ -8,7 +8,7 @@
     content="width=device-width, initial-scale=1.0"
   />
 
-  <title>Planly</title>
+  <title>PlanlyTime</title>
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -25,8 +25,8 @@
         </div>
 
         <div>
-          <div class="brand-name">Planly</div>
-          <div class="brand-subtitle">Planlama ve hatırlatma</div>
+          <div class="brand-name">PlanlyTime</div>
+          <div class="brand-subtitle">Planning and reminders</div>
         </div>
       </div>
 
@@ -57,7 +57,7 @@
             </svg>
           </span>
 
-          <span>Bugün</span>
+          <span>Today</span>
         </button>
 
         <button
@@ -81,7 +81,7 @@
             </svg>
           </span>
 
-          <span>Yaklaşan</span>
+          <span>Upcoming</span>
         </button>
 
         <button
@@ -105,13 +105,13 @@
             </svg>
           </span>
 
-          <span>Tamamlanan</span>
+          <span>Completed</span>
         </button>
 
       </nav>
 
       <div class="sidebar-footer">
-        Planly 1.0
+        PlanlyTime 1.0
       </div>
 
     </aside>
@@ -121,10 +121,10 @@
       <header class="topbar">
 
         <div>
-          <h1 id="pageTitle">Bugün</h1>
+          <h1 id="pageTitle">Today</h1>
 
           <p id="pageDescription">
-            Bugünkü planlarını görüntüle.
+            View today's plans.
           </p>
         </div>
 
@@ -142,7 +142,7 @@
             <path d="M5 12h14" />
           </svg>
 
-          <span>Plan ekle</span>
+          <span>Add plan</span>
         </button>
 
       </header>
@@ -151,7 +151,7 @@
 
         <div class="summary-card">
           <span class="summary-label">
-            Bugünkü planlar
+            Today's plans
           </span>
 
           <strong id="todayCount">0</strong>
@@ -185,7 +185,7 @@
             </h2>
 
             <p id="listSubtitle">
-              Planlarını buradan yönetebilirsin.
+              Manage your plans here.
             </p>
           </div>
 
@@ -224,10 +224,10 @@
 
           </div>
 
-          <h3>Henüz plan yok</h3>
+          <h3>No plans yet</h3>
 
           <p>
-            Yeni bir plan oluşturduğunda burada görünecek.
+            Your new plans will appear here.
           </p>
 
         </div>
@@ -248,14 +248,14 @@
       <div class="modal-header">
 
         <div>
-          <h2>Yeni plan</h2>
-          <p>Planının tarihini ve saatini belirle.</p>
+          <h2>New plan</h2>
+          <p>Set the date and time for your plan.</p>
         </div>
 
         <button
           id="closeModalButton"
           class="icon-button"
-          aria-label="Kapat"
+          aria-label="Close"
         >
 
           <svg
@@ -284,7 +284,7 @@
             id="planTitle"
             type="text"
             maxlength="80"
-            placeholder="Örneğin: Projeye devam et"
+            placeholder="For example: Continue the project"
             autocomplete="off"
             required
           />
@@ -296,7 +296,7 @@
           <div class="form-group">
 
             <label for="planDate">
-              Tarih
+              Date
             </label>
 
             <input
@@ -310,7 +310,7 @@
           <div class="form-group">
 
             <label for="planTime">
-              Saat
+              Time
             </label>
 
             <input
@@ -327,10 +327,10 @@
 
           <div>
 
-            <strong>Hatırlat</strong>
+            <strong>Reminder</strong>
 
             <span>
-              Zamanı geldiğinde alarm ve bildirim göster.
+              Show an alarm and notification when it's time.
             </span>
 
           </div>
@@ -352,14 +352,14 @@
             id="cancelPlanButton"
             class="secondary-button"
           >
-            İptal
+            Cancel
           </button>
 
           <button
             type="submit"
             class="primary-button"
           >
-            Planı kaydet
+            Save plan
           </button>
 
         </div>
@@ -397,7 +397,7 @@
       </div>
 
       <p class="reminder-small">
-        Planının zamanı geldi
+        It's time for your plan
       </p>
 
       <h2 id="reminderTitle">
@@ -414,14 +414,14 @@
           id="snoozeButton"
           class="secondary-button"
         >
-          10 dakika ertele
+          Snooze for 10 minutes
         </button>
 
         <button
           id="completeReminderButton"
           class="primary-button"
         >
-          Tamamlandı
+          Complete
         </button>
 
       </div>
