@@ -129,7 +129,7 @@ function formatDate(dateString) {
     );
 
   return new Intl.DateTimeFormat(
-    "tr-TR",
+    "en-US",
     {
       day: "numeric",
       month: "long",
@@ -214,46 +214,46 @@ function renderStats() {
 
 function updateHeadings() {
   if (activeView === "today") {
-    pageTitle.textContent = "Bugün";
+    pageTitle.textContent = "Today";
     pageDescription.textContent =
-      "Bugünkü planlarını görüntüle.";
+      "View today's plans.";
 
     listTitle.textContent =
-      "Bugünkü planların";
+      "Today's plans";
 
     listSubtitle.textContent =
-      "Bugün yapman gerekenler.";
+      "What you need to do today.";
 
     return;
   }
 
   if (activeView === "upcoming") {
     pageTitle.textContent =
-      "Yaklaşan";
+      "Upcoming";
 
     pageDescription.textContent =
-      "Yaklaşan planlarını görüntüle.";
+      "View your upcoming plans.";
 
     listTitle.textContent =
-      "Yaklaşan planlar";
+      "Upcoming plans";
 
     listSubtitle.textContent =
-      "Planlarını tarih sırasıyla görüntüle.";
+      "View your plans in chronological order.";
 
     return;
   }
 
   pageTitle.textContent =
-    "Tamamlanan";
+    "Completed";
 
   pageDescription.textContent =
-    "Tamamladığın planları görüntüle.";
+    "View your completed plans.";
 
   listTitle.textContent =
-    "Tamamlanan planlar";
+    "Completed plans";
 
   listSubtitle.textContent =
-    "Bitirdiğin planların geçmişi.";
+    "History of your completed plans.";
 }
 
 function renderPlans() {
@@ -292,7 +292,7 @@ function renderPlans() {
         class="plan-check"
         data-action="complete"
         data-id="${plan.id}"
-        aria-label="Tamamlandı"
+        aria-label="Completed"
       >
         <svg
           viewBox="0 0 24 24"
@@ -322,7 +322,7 @@ function renderPlans() {
 
           ${
             plan.reminder
-              ? "<span>Hatırlatma açık</span>"
+              ? "<span>Reminder on</span>"
               : ""
           }
 
@@ -336,7 +336,7 @@ function renderPlans() {
           class="plan-action delete"
           data-action="delete"
           data-id="${plan.id}"
-          aria-label="Sil"
+          aria-label="Delete"
         >
 
           <svg
@@ -439,10 +439,10 @@ function sendNotification(plan) {
 
   const notification =
     new Notification(
-      "Planly",
+      "PlanlyTime",
       {
         body:
-          `${plan.title} - Planının zamanı geldi.`
+          `${plan.title} - It's time for your plan.`
       }
     );
 
@@ -488,7 +488,7 @@ function playTone(
     }, duration);
   } catch (error) {
     console.error(
-      "Alarm sesi başlatılamadı.",
+      "Could not start alarm sound.",
       error
     );
   }
