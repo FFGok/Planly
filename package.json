@@ -1,7 +1,7 @@
 {
-  "name": "planly",
+  "name": "planlytime",
   "version": "1.0.0",
-  "description": "Planly web planning and reminder application",
+  "description": "PlanlyTime web planning and reminder application",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
