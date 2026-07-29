@@ -20,14 +20,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.get("*", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "index.html"
-    )
-  );
-});
 
 app.listen(PORT, () => {
   console.log(
