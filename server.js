@@ -16,13 +16,13 @@ app.use(
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
-    service: "Planly"
+    service: "PlanlyTime"
   });
 });
 
 
 app.listen(PORT, () => {
   console.log(
-    `Planly running on port ${PORT}`
+    `PlanlyTime running on port ${PORT}`
   );
 });
