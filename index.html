@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Planly</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <aside class="sidebar">
+
+      <div class="brand">
+        <div class="brand-mark">
+          P
+        </div>
+
+        <div>
+          <div class="brand-name">Planly</div>
+          <div class="brand-subtitle">Planlama ve hatırlatma</div>
+        </div>
+      </div>
+
+      <nav class="navigation">
+
+        <button
+          class="nav-item active"
+          data-view="today"
+        >
+          <span class="nav-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <rect
+                x="3"
+                y="5"
+                width="18"
+                height="16"
+                rx="3"
+              />
+
+              <path d="M8 3v4" />
+              <path d="M16 3v4" />
+              <path d="M3 10h18" />
+            </svg>
+          </span>
+
+          <span>Bugün</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="upcoming"
+        >
+          <span class="nav-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+
+              <path d="M12 7v5l3 2" />
+            </svg>
+          </span>
+
+          <span>Yaklaşan</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-view="completed"
+        >
+          <span class="nav-icon">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+              />
+
+              <path d="m8.5 12 2.2 2.2 4.8-5" />
+            </svg>
+          </span>
+
+          <span>Tamamlanan</span>
+        </button>
+
+      </nav>
+
+      <div class="sidebar-footer">
+        Planly 1.0
+      </div>
+
+    </aside>
+
+    <main class="main-content">
+
+      <header class="topbar">
+
+        <div>
+          <h1 id="pageTitle">Bugün</h1>
+
+          <p id="pageDescription">
+            Bugünkü planlarını görüntüle.
+          </p>
+        </div>
+
+        <button
+          id="addPlanButton"
+          class="primary-button"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 5v14" />
+            <path d="M5 12h14" />
+          </svg>
+
+          <span>Plan ekle</span>
+        </button>
+
+      </header>
+
+      <section class="summary-grid">
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Bugünkü planlar
+          </span>
+
+          <strong id="todayCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Yaklaşan
+          </span>
+
+          <strong id="upcomingCount">0</strong>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-label">
+            Tamamlanan
+          </span>
+
+          <strong id="completedCount">0</strong>
+        </div>
+
+      </section>
+
+      <section class="plans-panel">
+
+        <div class="plans-header">
+
+          <div>
+            <h2 id="listTitle">
+              Planların
+            </h2>
+
+            <p id="listSubtitle">
+              Planlarını buradan yönetebilirsin.
+            </p>
+          </div>
+
+        </div>
+
+        <div
+          id="plansList"
+          class="plans-list"
+        ></div>
+
+        <div
+          id="emptyState"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <rect
+                x="4"
+                y="5"
+                width="16"
+                height="15"
+                rx="3"
+              />
+
+              <path d="M8 3v4" />
+              <path d="M16 3v4" />
+              <path d="M4 10h16" />
+            </svg>
+
+          </div>
+
+          <h3>Henüz plan yok</h3>
+
+          <p>
+            Yeni bir plan oluşturduğunda burada görünecek.
+          </p>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+          <h2>Yeni plan</h2>
+          <p>Planının tarihini ve saatini belirle.</p>
+        </div>
+
+        <button
+          id="closeModalButton"
+          class="icon-button"
+          aria-label="Kapat"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M6 6l12 12" />
+            <path d="M18 6 6 18" />
+          </svg>
+
+        </button>
+
+      </div>
+
+      <form id="planForm">
+
+        <div class="form-group">
+
+          <label for="planTitle">
+            Plan
+          </label>
+
+          <input
+            id="planTitle"
+            type="text"
+            maxlength="80"
+            placeholder="Örneğin: Projeye devam et"
+            autocomplete="off"
+            required
+          />
+
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+
+            <label for="planDate">
+              Tarih
+            </label>
+
+            <input
+              id="planDate"
+              type="date"
+              required
+            />
+
+          </div>
+
+          <div class="form-group">
+
+            <label for="planTime">
+              Saat
+            </label>
+
+            <input
+              id="planTime"
+              type="time"
+              required
+            />
+
+          </div>
+
+        </div>
+
+        <label class="switch-row">
+
+          <div>
+
+            <strong>Hatırlat</strong>
+
+            <span>
+              Zamanı geldiğinde alarm ve bildirim göster.
+            </span>
+
+          </div>
+
+          <input
+            id="planReminder"
+            type="checkbox"
+            checked
+          />
+
+          <span class="switch"></span>
+
+        </label>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            id="cancelPlanButton"
+            class="secondary-button"
+          >
+            İptal
+          </button>
+
+          <button
+            type="submit"
+            class="primary-button"
+          >
+            Planı kaydet
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <div
+    id="reminderOverlay"
+    class="modal-overlay"
+  >
+
+    <div class="modal reminder-modal">
+
+      <div class="reminder-symbol">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+          />
+
+          <path d="M12 7v5l3 2" />
+        </svg>
+
+      </div>
+
+      <p class="reminder-small">
+        Planının zamanı geldi
+      </p>
+
+      <h2 id="reminderTitle">
+        Plan
+      </h2>
+
+      <p id="reminderTime">
+        00:00
+      </p>
+
+      <div class="reminder-actions">
+
+        <button
+          id="snoozeButton"
+          class="secondary-button"
+        >
+          10 dakika ertele
+        </button>
+
+        <button
+          id="completeReminderButton"
+          class="primary-button"
+        >
+          Tamamlandı
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="renderer.js"></script>
+
+</body>
+</html>
