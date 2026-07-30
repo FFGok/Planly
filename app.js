@@ -485,7 +485,7 @@ function sendNotification(plan) {
 
   const notification =
     new Notification(
-      "PlanlyTime",
+      "Planly",
       {
         body:
           `${plan.title} - It's time for your plan.`
@@ -499,7 +499,7 @@ function sendNotification(plan) {
 
 
 /* =========================
-   PLANLYTIME ALARM
+   PLANLY ALARM
 ========================= */
 
 function playChime() {
@@ -525,24 +525,10 @@ function playChime() {
       context.destination
     );
 
-    /*
-      Louder output than the
-      previous working alarm.
-    */
-
     masterGain.gain.setValueAtTime(
       0.82,
       now
     );
-
-    /*
-      Modern ascending chime.
-
-      Two connected phrases
-      make the sound longer
-      without becoming a harsh
-      repetitive beep.
-    */
 
     const notes = [
       {
@@ -611,10 +597,6 @@ function playChime() {
           now + note.start
         );
 
-      /*
-        Smooth attack
-      */
-
       gain.gain.setValueAtTime(
         0.0001,
         now + note.start
@@ -627,10 +609,6 @@ function playChime() {
             note.start +
             0.035
         );
-
-      /*
-        Smooth fade-out
-      */
 
       gain.gain
         .exponentialRampToValueAtTime(
@@ -659,18 +637,13 @@ function playChime() {
       );
     });
 
-    /*
-      The complete chime lasts
-      around 2.7 seconds.
-    */
-
     setTimeout(() => {
       context.close();
     }, 3000);
 
   } catch (error) {
     console.error(
-      "Could not start PlanlyTime alarm sound.",
+      "Could not start Planly alarm sound.",
       error
     );
   }
@@ -684,17 +657,7 @@ function playChime() {
 function playAlarm() {
   stopAlarm();
 
-  /*
-    Start immediately.
-  */
-
   playChime();
-
-  /*
-    Sound: about 2.7 sec
-    Silence: about 0.8 sec
-    Then repeat.
-  */
 
   alarmInterval =
     setInterval(() => {
@@ -1096,7 +1059,7 @@ setInterval(
 
 
 /* =========================
-   START PLANLYTIME
+   START PLANLY
 ========================= */
 
 loadPlans();
