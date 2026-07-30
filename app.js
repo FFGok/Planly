@@ -79,6 +79,11 @@ const completeReminderButton =
 const navItems =
   document.querySelectorAll(".nav-item");
 
+
+/* =========================
+   STORAGE
+========================= */
+
 function loadPlans() {
   try {
     const saved =
@@ -104,6 +109,11 @@ function savePlans() {
     JSON.stringify(plans)
   );
 }
+
+
+/* =========================
+   DATE
+========================= */
 
 function getTodayString() {
   const date = new Date();
@@ -138,6 +148,11 @@ function formatDate(dateString) {
   ).format(date);
 }
 
+
+/* =========================
+   SECURITY
+========================= */
+
 function escapeHTML(value) {
   return value
     .replaceAll("&", "&amp;")
@@ -146,6 +161,11 @@ function escapeHTML(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+
+/* =========================
+   FILTERING
+========================= */
 
 function getFilteredPlans() {
   const today =
@@ -188,6 +208,11 @@ function sortPlans(items) {
   );
 }
 
+
+/* =========================
+   STATS
+========================= */
+
 function renderStats() {
   const today =
     getTodayString();
@@ -212,9 +237,15 @@ function renderStats() {
     ).length;
 }
 
+
+/* =========================
+   HEADINGS
+========================= */
+
 function updateHeadings() {
   if (activeView === "today") {
     pageTitle.textContent = "Today";
+
     pageDescription.textContent =
       "View today's plans.";
 
@@ -255,6 +286,11 @@ function updateHeadings() {
   listSubtitle.textContent =
     "History of your completed plans.";
 }
+
+
+/* =========================
+   PLAN LIST
+========================= */
 
 function renderPlans() {
   const filtered =
@@ -365,6 +401,11 @@ function render() {
   renderPlans();
 }
 
+
+/* =========================
+   ADD PLAN MODAL
+========================= */
+
 function openPlanModal() {
   planForm.reset();
 
@@ -402,6 +443,11 @@ function closePlanModal() {
   );
 }
 
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
 async function requestNotifications() {
   if (
     !("Notification" in window)
@@ -417,8 +463,8 @@ async function requestNotifications() {
       await Notification
         .requestPermission();
     } catch {
-      // Bildirim izni alınamazsa
-      // Planly içi alarm devam eder.
+      // PlanlyTime alarm will
+      // continue without notifications.
     }
   }
 }
@@ -451,44 +497,145 @@ function sendNotification(plan) {
   };
 }
 
-function playTone(
-  frequency,
-  duration
-) {
+
+/* =========================
+   PLANLYTIME ALARM
+========================= */
+
+function playChime() {
   try {
     const AudioContextClass =
       window.AudioContext ||
       window.webkitAudioContext;
 
+    if (!AudioContextClass) {
+      return;
+    }
+
     const context =
       new AudioContextClass();
 
-    const oscillator =
-      context.createOscillator();
-
-    const gain =
+    const masterGain =
       context.createGain();
 
-    oscillator.type = "sine";
-    oscillator.frequency.value =
-      frequency;
+    masterGain.gain.setValueAtTime(
+      0.0001,
+      context.currentTime
+    );
 
-    gain.gain.value = 0.16;
-
-    oscillator.connect(gain);
-    gain.connect(
+    masterGain.connect(
       context.destination
     );
 
-    oscillator.start();
+    /*
+      PlanlyTime Chime
+
+      Three soft ascending notes.
+      Designed to sound more like
+      a modern reminder instead of
+      a repetitive browser beep.
+    */
+
+    const notes = [
+      {
+        frequency: 659.25,
+        start: 0,
+        duration: 0.55,
+        volume: 0.18
+      },
+
+      {
+        frequency: 783.99,
+        start: 0.14,
+        duration: 0.65,
+        volume: 0.15
+      },
+
+      {
+        frequency: 987.77,
+        start: 0.30,
+        duration: 0.85,
+        volume: 0.12
+      }
+    ];
+
+    masterGain.gain
+      .exponentialRampToValueAtTime(
+        0.9,
+        context.currentTime + 0.04
+      );
+
+    masterGain.gain
+      .exponentialRampToValueAtTime(
+        0.0001,
+        context.currentTime + 1.4
+      );
+
+    notes.forEach((note) => {
+      const oscillator =
+        context.createOscillator();
+
+      const gain =
+        context.createGain();
+
+      oscillator.type =
+        "sine";
+
+      oscillator.frequency
+        .setValueAtTime(
+          note.frequency,
+          context.currentTime +
+            note.start
+        );
+
+      gain.gain
+        .setValueAtTime(
+          0.0001,
+          context.currentTime +
+            note.start
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          note.volume,
+          context.currentTime +
+            note.start +
+            0.04
+        );
+
+      gain.gain
+        .exponentialRampToValueAtTime(
+          0.0001,
+          context.currentTime +
+            note.start +
+            note.duration
+        );
+
+      oscillator.connect(gain);
+
+      gain.connect(
+        masterGain
+      );
+
+      oscillator.start(
+        context.currentTime +
+          note.start
+      );
+
+      oscillator.stop(
+        context.currentTime +
+          note.start +
+          note.duration
+      );
+    });
 
     setTimeout(() => {
-      oscillator.stop();
       context.close();
-    }, duration);
+    }, 1700);
+
   } catch (error) {
     console.error(
-      "Could not start alarm sound.",
+      "Could not start PlanlyTime alarm sound.",
       error
     );
   }
@@ -497,19 +644,22 @@ function playTone(
 function playAlarm() {
   stopAlarm();
 
-  let tone = false;
+  /*
+    Play immediately.
+  */
 
-  playTone(880, 450);
+  playChime();
+
+  /*
+    Repeat every 4.5 seconds
+    until the user snoozes or
+    completes the reminder.
+  */
 
   alarmInterval =
     setInterval(() => {
-      tone = !tone;
-
-      playTone(
-        tone ? 880 : 1040,
-        450
-      );
-    }, 650);
+      playChime();
+    }, 4500);
 }
 
 function stopAlarm() {
@@ -521,6 +671,11 @@ function stopAlarm() {
     alarmInterval = null;
   }
 }
+
+
+/* =========================
+   REMINDER
+========================= */
 
 function showReminder(plan) {
   activeReminderPlan = plan;
@@ -536,6 +691,7 @@ function showReminder(plan) {
   );
 
   playAlarm();
+
   sendNotification(plan);
 }
 
@@ -562,7 +718,8 @@ function checkReminders() {
       !Number.isNaN(target) &&
       now >= target
     ) {
-      plan.reminderTriggered = true;
+      plan.reminderTriggered =
+        true;
 
       changed = true;
 
@@ -577,6 +734,11 @@ function checkReminders() {
     render();
   }
 }
+
+
+/* =========================
+   COMPLETE / DELETE
+========================= */
 
 function toggleComplete(planId) {
   const plan =
@@ -607,10 +769,16 @@ function deletePlan(planId) {
   render();
 }
 
+
+/* =========================
+   ADD PLAN EVENTS
+========================= */
+
 addPlanButton.addEventListener(
   "click",
   () => {
     requestNotifications();
+
     openPlanModal();
   }
 );
@@ -636,6 +804,11 @@ modalOverlay.addEventListener(
     }
   }
 );
+
+
+/* =========================
+   CREATE PLAN
+========================= */
 
 planForm.addEventListener(
   "submit",
@@ -689,6 +862,11 @@ planForm.addEventListener(
   }
 );
 
+
+/* =========================
+   PLAN ACTIONS
+========================= */
+
 plansList.addEventListener(
   "click",
   (event) => {
@@ -720,6 +898,11 @@ plansList.addEventListener(
   }
 );
 
+
+/* =========================
+   NAVIGATION
+========================= */
+
 navItems.forEach(
   (button) => {
     button.addEventListener(
@@ -744,6 +927,11 @@ navItems.forEach(
     );
   }
 );
+
+
+/* =========================
+   SNOOZE
+========================= */
 
 snoozeButton.addEventListener(
   "click",
@@ -773,20 +961,29 @@ snoozeButton.addEventListener(
       ).padStart(2, "0")}`;
 
     activeReminderPlan
-      .reminderTriggered = false;
+      .reminderTriggered =
+        false;
 
     stopAlarm();
 
-    reminderOverlay.classList.remove(
-      "visible"
-    );
+    reminderOverlay
+      .classList.remove(
+        "visible"
+      );
 
-    activeReminderPlan = null;
+    activeReminderPlan =
+      null;
 
     savePlans();
+
     render();
   }
 );
+
+
+/* =========================
+   COMPLETE REMINDER
+========================= */
 
 completeReminderButton
   .addEventListener(
@@ -806,12 +1003,19 @@ completeReminderButton
           "visible"
         );
 
-      activeReminderPlan = null;
+      activeReminderPlan =
+        null;
 
       savePlans();
+
       render();
     }
   );
+
+
+/* =========================
+   KEYBOARD
+========================= */
 
 document.addEventListener(
   "keydown",
@@ -826,6 +1030,11 @@ document.addEventListener(
   }
 );
 
+
+/* =========================
+   VISIBILITY
+========================= */
+
 document.addEventListener(
   "visibilitychange",
   () => {
@@ -835,10 +1044,21 @@ document.addEventListener(
   }
 );
 
+
+/* =========================
+   REMINDER LOOP
+========================= */
+
 setInterval(
   checkReminders,
   1000
 );
 
+
+/* =========================
+   START PLANLYTIME
+========================= */
+
 loadPlans();
+
 checkReminders();
