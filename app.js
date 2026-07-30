@@ -449,7 +449,9 @@ function closePlanModal() {
 ========================= */
 
 async function requestNotifications() {
-  if (!("Notification" in window)) {
+  if (
+    !("Notification" in window)
+  ) {
     return;
   }
 
@@ -468,7 +470,9 @@ async function requestNotifications() {
 }
 
 function sendNotification(plan) {
-  if (!("Notification" in window)) {
+  if (
+    !("Notification" in window)
+  ) {
     return;
   }
 
@@ -495,7 +499,7 @@ function sendNotification(plan) {
 
 
 /* =========================
-   PLANLYTIME MODERN ALARM V2
+   PLANLYTIME ALARM
 ========================= */
 
 function playChime() {
@@ -514,120 +518,92 @@ function playChime() {
     const now =
       context.currentTime;
 
-    /*
-      MASTER OUTPUT
-    */
-
-    const master =
+    const masterGain =
       context.createGain();
 
-    const compressor =
-      context.createDynamicsCompressor();
-
-    compressor.threshold.value = -16;
-    compressor.knee.value = 14;
-    compressor.ratio.value = 4;
-    compressor.attack.value = 0.003;
-    compressor.release.value = 0.3;
-
-    master.connect(compressor);
-    compressor.connect(
+    masterGain.connect(
       context.destination
     );
 
     /*
-      Modern PlanlyTime melody.
+      Louder output than the
+      previous working alarm.
+    */
 
-      Two connected chimes instead
-      of one short browser beep.
+    masterGain.gain.setValueAtTime(
+      0.82,
+      now
+    );
+
+    /*
+      Modern ascending chime.
+
+      Two connected phrases
+      make the sound longer
+      without becoming a harsh
+      repetitive beep.
     */
 
     const notes = [
-      // First chime
-      {
-        frequency: 523.25,
-        start: 0.00,
-        duration: 0.90,
-        volume: 0.42
-      },
       {
         frequency: 659.25,
-        start: 0.13,
-        duration: 1.00,
-        volume: 0.38
-      },
-      {
-        frequency: 783.99,
-        start: 0.28,
-        duration: 1.10,
-        volume: 0.34
-      },
-      {
-        frequency: 987.77,
-        start: 0.46,
-        duration: 1.15,
-        volume: 0.28
+        start: 0.00,
+        duration: 0.70,
+        volume: 0.55
       },
 
-      // Second chime
-      {
-        frequency: 587.33,
-        start: 1.20,
-        duration: 0.95,
-        volume: 0.40
-      },
-      {
-        frequency: 739.99,
-        start: 1.34,
-        duration: 1.05,
-        volume: 0.36
-      },
-      {
-        frequency: 880.00,
-        start: 1.49,
-        duration: 1.10,
-        volume: 0.32
-      },
-      {
-        frequency: 1046.50,
-        start: 1.66,
-        duration: 1.25,
-        volume: 0.27
-      },
-
-      // Soft ending
       {
         frequency: 783.99,
-        start: 2.35,
-        duration: 1.00,
-        volume: 0.30
+        start: 0.18,
+        duration: 0.75,
+        volume: 0.48
       },
+
       {
         frequency: 987.77,
-        start: 2.48,
-        duration: 1.15,
-        volume: 0.26
+        start: 0.36,
+        duration: 0.85,
+        volume: 0.42
       },
+
       {
         frequency: 1174.66,
-        start: 2.64,
-        duration: 1.25,
-        volume: 0.22
+        start: 0.58,
+        duration: 0.95,
+        volume: 0.36
+      },
+
+      {
+        frequency: 783.99,
+        start: 1.25,
+        duration: 0.70,
+        volume: 0.50
+      },
+
+      {
+        frequency: 987.77,
+        start: 1.43,
+        duration: 0.80,
+        volume: 0.44
+      },
+
+      {
+        frequency: 1318.51,
+        start: 1.65,
+        duration: 1.05,
+        volume: 0.36
       }
     ];
 
     notes.forEach((note) => {
-      /*
-        Main tone
-      */
-
       const oscillator =
         context.createOscillator();
 
       const gain =
         context.createGain();
 
-      oscillator.type = "sine";
+      oscillator.type =
+        "sine";
 
       oscillator.frequency
         .setValueAtTime(
@@ -636,7 +612,7 @@ function playChime() {
         );
 
       /*
-        Smooth attack.
+        Smooth attack
       */
 
       gain.gain.setValueAtTime(
@@ -653,7 +629,7 @@ function playChime() {
         );
 
       /*
-        Smooth long fade.
+        Smooth fade-out
       */
 
       gain.gain
@@ -664,8 +640,13 @@ function playChime() {
             note.duration
         );
 
-      oscillator.connect(gain);
-      gain.connect(master);
+      oscillator.connect(
+        gain
+      );
+
+      gain.connect(
+        masterGain
+      );
 
       oscillator.start(
         now + note.start
@@ -676,135 +657,16 @@ function playChime() {
           note.start +
           note.duration
       );
-
-
-      /*
-        Small harmonic layer.
-
-        This gives the chime a
-        cleaner / glass-like sound
-        instead of a plain sine beep.
-      */
-
-      const harmonic =
-        context.createOscillator();
-
-      const harmonicGain =
-        context.createGain();
-
-      harmonic.type = "sine";
-
-      harmonic.frequency
-        .setValueAtTime(
-          note.frequency * 2,
-          now + note.start
-        );
-
-      harmonicGain.gain
-        .setValueAtTime(
-          0.0001,
-          now + note.start
-        );
-
-      harmonicGain.gain
-        .exponentialRampToValueAtTime(
-          note.volume * 0.10,
-          now +
-            note.start +
-            0.025
-        );
-
-      harmonicGain.gain
-        .exponentialRampToValueAtTime(
-          0.0001,
-          now +
-            note.start +
-            note.duration * 0.55
-        );
-
-      harmonic.connect(
-        harmonicGain
-      );
-
-      harmonicGain.connect(
-        master
-      );
-
-      harmonic.start(
-        now + note.start
-      );
-
-      harmonic.stop(
-        now +
-          note.start +
-          note.duration
-      );
     });
 
-
     /*
-      Extra low-volume foundation.
-
-      Makes the alarm feel fuller
-      without turning it into a
-      harsh buzzer.
-    */
-
-    const foundation =
-      context.createOscillator();
-
-    const foundationGain =
-      context.createGain();
-
-    foundation.type = "sine";
-
-    foundation.frequency
-      .setValueAtTime(
-        261.63,
-        now
-      );
-
-    foundationGain.gain
-      .setValueAtTime(
-        0.0001,
-        now
-      );
-
-    foundationGain.gain
-      .exponentialRampToValueAtTime(
-        0.09,
-        now + 0.08
-      );
-
-    foundationGain.gain
-      .exponentialRampToValueAtTime(
-        0.0001,
-        now + 3.7
-      );
-
-    foundation.connect(
-      foundationGain
-    );
-
-    foundationGain.connect(
-      master
-    );
-
-    foundation.start(now);
-
-    foundation.stop(
-      now + 3.8
-    );
-
-
-    /*
-      Close AudioContext after
-      everything has finished.
+      The complete chime lasts
+      around 2.7 seconds.
     */
 
     setTimeout(() => {
       context.close();
-    }, 4200);
+    }, 3000);
 
   } catch (error) {
     console.error(
@@ -829,17 +691,15 @@ function playAlarm() {
   playChime();
 
   /*
-    The sound itself lasts around
-    3.8 seconds.
-
-    Repeat after 4.2 seconds,
-    leaving almost no dead silence.
+    Sound: about 2.7 sec
+    Silence: about 0.8 sec
+    Then repeat.
   */
 
   alarmInterval =
     setInterval(() => {
       playChime();
-    }, 4200);
+    }, 3500);
 }
 
 function stopAlarm() {
@@ -958,6 +818,7 @@ addPlanButton.addEventListener(
   "click",
   () => {
     requestNotifications();
+
     openPlanModal();
   }
 );
