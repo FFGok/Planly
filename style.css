@@ -97,20 +97,22 @@ button {
   display: grid;
   place-items: center;
 
+  flex-shrink: 0;
+
   border-radius: 13px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #1ba8ff,
-      #5865ff 60%,
-      #8147ff
-    );
+  overflow: hidden;
 
-  color: white;
+  background: #090b10;
+}
 
-  font-weight: 700;
-  font-size: 21px;
+.brand-logo {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
 }
 
 .brand-name {
